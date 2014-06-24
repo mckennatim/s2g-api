@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites>
+<testsuite name="Frisby Test: Update user" errors="0" tests="1" failures="0" time="0.025" timestamp="2014-03-18T14:57:09">
+  <testcase classname="Frisby Test: Update user" name="
+	[ PUT http://localhost:3000/users/tim/532894f9fec33ab4280107b9 ]" time="0.025"></testcase>
+</testsuite>
+</testsuites>

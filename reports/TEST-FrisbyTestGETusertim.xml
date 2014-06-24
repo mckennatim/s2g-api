@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites>
+<testsuite name="Frisby Test: GET user tim" errors="0" tests="1" failures="0" time="0.032" timestamp="2014-03-18T14:57:09">
+  <testcase classname="Frisby Test: GET user tim" name="
+	[ GET http://localhost:3000/users/tim ]" time="0.031"></testcase>
+</testsuite>
+</testsuites>
