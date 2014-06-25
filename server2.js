@@ -2,6 +2,8 @@ var express = require('express')
 var nodemailer = require('nodemailer')
 var myut = require('./util/myutil')
 var gmailCred =require('./util/config').gmail();
+var jwt = require('jwt-simple');
+var secret = 'mambibi catches birds';
 var passport = require('passport')
 //var ppstuff = require('./util/ppstuff2')
 var util = require('util')
@@ -245,10 +247,12 @@ app.get('/api/', function(req, res) {
 //curl -c cookies.txt -b cookies.txt -G http://127.0.0.1:3000/api/account
 //node_modules/vows/bin/vows  test/strategy-spec.js  --spec
 app.post('/api/authenticate', 
-  passport.authenticate('localapikey', { failureRedirect: '/api/unauthorized'}),
+  passport.authenticate('localapikey', {session: false, failureRedirect: '/api/unauthorized'}),
   function(req, res) {
-     res.jsonp(req.user)
-     console.log(req.user)
+    var payload = {name: req.user.name};
+    var token = jwt.encode(payload,secret);
+    res.jsonp({token: token});
+    console.log(token);
   });
 
 app.get('/api/account', ensureAuthenticated, function(req, res){ 
