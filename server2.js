@@ -1,4 +1,9 @@
 var express = require('express')
+var bodyParser = require('body-parser')
+var cookieParser = require('cookie-parser')
+var methodOverride =require('method-override')
+var logger = require('morgan')
+var session = require('express-session')
 var nodemailer = require('nodemailer')
 var myut = require('./util/myutil')
 var gmailCred =require('./util/config').gmail();
@@ -8,6 +13,7 @@ var passport = require('passport')
 //var ppstuff = require('./util/ppstuff2')
 var util = require('util')
 var LocalStrategy = require('passport-localapikey').Strategy;
+var BearerStrategy = require('passport-http-bearer').Strategy;
 /*--------------------------------setup db-------------------------------------------*/
 var MongoClient = require('mongodb').MongoClient
 var Server = require('mongodb').Server
@@ -210,23 +216,35 @@ passport.use(new LocalStrategy(
     });
   }
 )); 
+
+passport.use(new BearerStrategy(
+  function(token, done) {
+    var userName = jwt.decode(token, secret);
+    findByUsername(userName, function(err, user) {
+      if (err) { return done(err); }
+      if (!user) { return done(null, false); }
+      return done(null, user, { scope: 'all' });
+    });
+  }
+));
 /*-----------------------------setup app-----------------------------------*/
 var app = express();
-app.configure(function() {
+//app.configure(function() {
   app.set('views', __dirname + '/views');
   app.set('view engine', 'ejs');
-  app.use(express.logger());
-  app.use(express.cookieParser());
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(express.session({ secret: 'keyboard cat' }));
+  app.use(logger());
+  app.use(cookieParser());
+  app.use(bodyParser.urlencoded({extended: true}));
+  app.use(bodyParser.json());
+  app.use(methodOverride());
+  app.use(session({ secret: 'keyboard cat',saveUninitialized: true, resave: true}));
   // Initialize Passport!  Also use passport.session() middleware, to support
   // persistent login sessions (recommended).
   app.use(passport.initialize());
   app.use(passport.session());
-  app.use(app.router);
+  //app.use(app.router);
   app.use(express.static(__dirname + '/../../public'));
-});
+//});
 app.all('*', function(req,res,next){
   var htt= req.headers.origin;
   res.header("Access-Control-Allow-Origin", htt);
@@ -277,7 +295,7 @@ app.post('/api/users', function(req, res){//POST=Create
     res.jsonp(retv);
   });
 }); 
-app.del('/api/users/:name', function(req, res){
+app.delete('/api/users/:name', function(req, res){
   console.log('in delete user by name');
   console.log(req.params);
   var name = req.params.name;
@@ -480,7 +498,7 @@ app.post('/api/lists/:shops', function(req,res){
       });
   });  
 })
-app.del('/api/lists/:lid', function(req,res){
+app.delete('/api/lists/:lid', function(req,res){
   console.log('in delete list by lid');
   console.log(req.params);
   var lid = req.params.lid;
