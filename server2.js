@@ -14,6 +14,7 @@ var passport = require('passport')
 var util = require('util')
 var LocalStrategy = require('passport-localapikey').Strategy;
 var BearerStrategy = require('passport-http-bearer').Strategy;
+var _ = require('underscore');
 /*--------------------------------setup db-------------------------------------------*/
 var MongoClient = require('mongodb').MongoClient
 var Server = require('mongodb').Server
@@ -81,6 +82,27 @@ findByUsername = function(name, fn) {
     });
   });
 }
+findByToken = function(token, fn) {
+    if (token) {
+        try {
+            var user = jwt.decode(token, secret);  
+            var name = user.name;
+            db.collection('users', function(err, collection) {
+                collection.findOne({name:name},function(err, items) {
+                    console.log(items);
+                    if (items.name === name) {
+                        return fn(null, items);
+                    } 
+                    return fn(null, null); 
+                });
+            }); 
+        } catch (err) {
+            //console.log(err)
+            return fn(err, null); 
+        }
+    } 
+}
+
 findByApiKey = function(apikey, fn) {
   console.log(apikey)
   db.collection('users', function(err, collection) {
@@ -190,6 +212,10 @@ updateUser=function(usr, res, callback){
   });     
 }
 
+var isRightList = function(lists, list){
+    return _.find(lists, function(obj) { return obj.lid == list })
+}
+
 /*-----------------------------setup passport-----------------------------------*/
 
 passport.serializeUser(function(user, done) {
@@ -217,13 +243,23 @@ passport.use(new LocalStrategy(
   }
 )); 
 
-passport.use(new BearerStrategy(
+passport.use(new BearerStrategy({
+  },
   function(token, done) {
-    var userName = jwt.decode(token, secret);
-    findByUsername(userName, function(err, user) {
-      if (err) { return done(err); }
-      if (!user) { return done(null, false); }
-      return done(null, user, { scope: 'all' });
+    // asynchronous validation, for effect...
+    process.nextTick(function () {     
+      // Find the user by token.  If there is no user with the given token, set
+      // the user to `false` to indicate failure.  Otherwise, return the
+      // authenticated `user`.  Note that in a production-ready application, one
+      // would want to validate the token for authenticity.
+      findByToken(token, function(err, user) {
+        if (err) {
+            //console.log(err)
+            return done(err); 
+        }
+        if (!user) { return done(null, false); }
+        return done(null, user);
+      })
     });
   }
 ));
@@ -267,15 +303,22 @@ app.get('/api/', function(req, res) {
 app.post('/api/authenticate', 
   passport.authenticate('localapikey', {session: false, failureRedirect: '/api/unauthorized'}),
   function(req, res) {
+    console.log(req.body)
+    console.log('just sent body in /api/authenticate')
     var payload = {name: req.user.name};
-    var token = jwt.encode(payload,secret);
+    var token = jwt.encode(payload, secret);
+    var name =jwt.decode(token, secret);
+    console.log(name)
     res.jsonp({token: token});
     console.log(token);
   });
 
-app.get('/api/account', ensureAuthenticated, function(req, res){ 
-  console.log('in api/account') 
-  res.jsonp(req.user)
+app.get('/api/account', 
+  passport.authenticate('bearer', { session: false }), 
+  function(req, res){ 
+    console.log('in api/account 1') 
+    console.log(req.body)
+    res.jsonp(req.user)
 });
 
 app.get('/api/unauthorized', function(req, res){
@@ -476,16 +519,26 @@ app.get('/api/lists', function(req, res) {
     console.log('in findLists');
     myut.find(db, 'lists', res);
 });
-app.get('/api/lists/:lid', ensureAuthenticated, function(req,res){
-  console.log('in getList by lid');
-  console.log(req.params);
-  var lid = req.params.lid;
-  db.collection('lists', function(err, collection) {
-    collection.findOne({lid:lid}, function(err, items) {
-      if(err){res.jsonp(err)}else{res.jsonp(items)};
-    })
-  })
-})
+
+app.get('/api/lists/:lid', 
+    passport.authenticate('bearer', { session: false }), 
+    function(req, res){ 
+        console.log('in getList by lid');
+        //console.log(req.params);
+        //console.log(req.user);
+        var lid = req.params.lid;
+        if (isRightList(req.user.lists, lid)) {
+            db.collection('lists', function(err, collection) {
+                collection.findOne({lid:lid}, function(err, items) {
+                    if(err){res.jsonp(err)}else{res.jsonp(items)};
+                })
+            })      
+        } else {
+            res.jsonp({message: 'that is not one of your lists', lists: req.user.lists})
+        }
+    }
+)
+
 app.post('/api/lists/:shops', function(req,res){
   console.log('in createList w shops');
   console.log(req.params.shops);

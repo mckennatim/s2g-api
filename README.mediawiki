@@ -3,7 +3,9 @@ This is a rewrite of PHP/MYSQL mobile-first app for shared shopping lists. While
 
 The basic architecture is to create a REST API that contains a good part of the business logic or MODEL of the system. The api communicates in JSON to a front end encapsulating the CONTROLLER and VIEW.
 
-Currently hosted locally but I've just got an new vps that will be a testbed for deploying node apps. 
+Currently hosted at parleyvale.com
+test using mocha installed globally 
+
 ===using superagent and mocha for testing===
  basic database tests
    √ if there are no lists for user it should be undefined (105ms)

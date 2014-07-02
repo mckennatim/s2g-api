@@ -31,31 +31,53 @@ describe('superagent:', function(){
         .send({apikey:apikey})
         .end(function(e,res){
           console.log(res.body
-
             )
-          expect(res.body.apikey).to.be(apikey);
+          expect(res.body.token.length).to.be.above(30)
+          expect(res.body.token).to.be.a('string');
           expect(1).to.eql(1);
           done();
         })
     })
-    it('GETs succeeds w userinfo from api/account when authenticated', function(done){
+    it('GETs succeeds w userinfo from api/account when passed token', function(done){
       agent
         .get('http://localhost:3000/api/account/')
+        .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoidGltIn0.LmoK1Nr8uA4hrGr25L2AlKXs6U832Z_lE6JGznHJfFs')
         .end(function(e,res){
           console.log(res.body)
           expect(res.body.apikey).to.be(apikey);
           done()
         })
     })    
-    it('GETs succeeds api/lists/Jutebi when authenticated', function(done){
+    it('GETs succeeds api/lists/Jutebi when passed token', function(done){
       agent
         .get(httpLoc+'lists/'+listId)
+        .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoidGltIn0.LmoK1Nr8uA4hrGr25L2AlKXs6U832Z_lE6JGznHJfFs')        
         .end(function(e,res){
           console.log(res.body)
           expect(res.body.lid).to.be('Jutebi');
           done()
         })
     })        
+    it('GETs fails when api/lists/Jutebidog is not in user.lists w/token ', function(done){
+      agent
+        .get(httpLoc+'lists/'+listId+'dog')
+        .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoidGltIn0.LmoK1Nr8uA4hrGr25L2AlKXs6U832Z_lE6JGznHJfFs')        
+        .end(function(e,res){
+          console.log(res.body)
+          expect(res.body.message).to.be('that is not one of your lists');
+          done()
+        })
+    })        
+   it('GETs fails with 500 when api/lists/Jutebi i has a bad token ', function(done){
+      agent
+        .get(httpLoc+'lists/'+listId+'dog')
+        .set('Authorization', 'Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoidGltIn0.LmoK1Nr8uA4hrGr25L2AlKXs6U832Z_lE6JGznHJfFs')        
+        .end(function(e,res){
+          console.log(res.body)
+          expect(res.status).to.be(500);
+          done()
+        })
+    })  
     it('DELs users/:name from users->success=1', function(done){
       superagent.del(httpLoc+'users/'+name)
         .end(function(e, res){
@@ -210,16 +232,6 @@ describe('superagent:', function(){
           done()
         })
     })
-    it('GETs authenticated /lists/:lid', function(done){
-      agent
-        .get(httpLoc+'lists/'+listId)
-        .end(function(e,res){
-          expect(e).to.be(null)
-          console.log(res.body)
-          expect(res.body.lid).to.be(listId)
-          done()
-        })
-    })
 
     it('DELs a list by :lid', function(done){
       superagent.del(httpLoc+'lists/'+newListId)
@@ -248,28 +260,17 @@ describe('superagent:', function(){
     var eregtim = 'mckenna.tim@gmail.com';
     var enottim = 'mckenna.nottim@gmail.com';
     //before(loginUser(agent));    
-    it('POSTs succeeds for fake user for correct apikey',function(done){
+    it('POSTs /authenticates w apikey and returns token',function(done){
       agent
         .post('http://localhost:3000/api/authenticate')
         .send({apikey:apikey})
         .end(function(e,res){
-          console.log(res.body
-
-            )
-          expect(res.body.apikey).to.be(apikey);
-          expect(1).to.eql(1);
+          console.log(res.body )
+          expect(res.body.token).to.be('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoidGltIn0.LmoK1Nr8uA4hrGr25L2AlKXs6U832Z_lE6JGznHJfFs');
           done();
         })
     })
-    it('GETs succeeds w userinfo from api/account when authenticated', function(done){
-      agent
-        .get('http://localhost:3000/api/account/')
-        .end(function(e,res){
-          console.log(res.body)
-          expect(res.body.apikey).to.be(apikey);
-          done()
-        })
-    })
+
     it('POSTs fails with error for fake user with wrong apikey',function(done){
       agent
         .post('http://localhost:3000/api/authenticate')
@@ -280,15 +281,7 @@ describe('superagent:', function(){
           done();
         })
     })
-    it('GETs fails with error for api/account fails when not authenticated', function(done){
-      agent
-        .get('http://localhost:3000/api/account/')
-        .end(function(e,res){
-          console.log(res.body)
-          expect(res.body.message).to.be('Authentication Error');
-          done()
-        })
-    })
+
     it('gets a [conflict] to existing user and email', function(done){
       agent
         .get(httpLoc+'isMatch/?user='+ureg+'&email=f'+eregtim)
