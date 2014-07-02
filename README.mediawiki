@@ -7,45 +7,99 @@ Currently hosted at parleyvale.com
 test using mocha installed globally 
 
 ===using superagent and mocha for testing===
- basic database tests
-   √ if there are no lists for user it should be undefined (105ms)
-   √ should be undefined if lid doesnt match any list
-
- superagent:
-   √ GET / should be running and return: please select...
-   users
-     √ DELs users/:name from users->success=1
-     √ GETs {} if users/:tim7 doesnt exist
-     √ GETs all users and counts em
-     √ POSTs a new /user/:tim7 -> full array of objects
-     √ GETs all users expecting the count to go up
-     √ GETs a users/:tim7
-     √ rejects POST of duplicate user/:tim7 ->11000
-     √ PUTs a new :list on /users/:name/:listId->list
-     √ rejects a PUT of new :list on /users->list already included
-     √ reject a PUT of new :list for user -> name taken, choose another
-   products
-     √ GETs all /products
-     √ GETs all /products for /:listId 0
-     √ GETs /products/:name/:shops
-     √ fails to GETs /products/:name Or/:shopNoExists
-     √ POSTs new /product/:lid
-     √ checks that product count ^ and new product is there
-     √ DELs products/:_id->success=1
-     √ GETs /products/done/:lid for list
-     √ GETs no /products/needed/:lid for list
-     √ PUTs update /product/:pid to needed
-     √ GETs 1 /products/needed/:lid for list
-     √ PUTs update /product/:pid to done
-     √ PUTs update /product/:pid product(name)
-   lists
-     √ POSTs (creates) a new list
-     √ GETs timestamp for /lists/:lid
-     √ DELs a list by :lid
-     √ PUTs updates /list timestamp
 
 
- 30 passing (374ms)
+  basic database tests
+    ✓ if there are no lists for user it should be undefined
+    ✓ should be undefined if lid doesnt match any list
+
+  superagent:
+    ✓ GET / should be running and return: please select...
+    users
+{ token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoidGltIn0.LmoK1Nr8uA4hrGr25L2AlKXs6U832Z_lE6JGznHJfFs' }
+      ✓ POSTs succeeds for fake user for correct apikey
+{ _id: '53a4bc0d5b48dc8e1f690dc4',
+  apikey: 'Natacitipavuwunexelisaci',
+  defaultList: 0,
+  email: 'mckenna.tim@gmail.com',
+  id: 1,
+  lists: [ { lid: 'Jutebi', shops: 'groceries' } ],
+  name: 'tim',
+  role: 'admin',
+  timestamp: 1404331409144 }
+      ✓ GETs succeeds w userinfo from api/account when passed token
+{ lid: 'Jutebi',
+  shops: 'groceries',
+  timestamp: 1404331409113,
+  list:
+   [ { product: 'banana', done: false, tags: [], amt: {} },
+     { product: 'coffee', done: false, tags: [], amt: {} },
+     { product: 'apples', done: true, tags: [Object], amt: [Object] },
+     { product: 'milk', done: false, tags: [Object], amt: [Object] },
+     { product: 'butter', done: false, tags: [], amt: {} },
+     { product: 'teff flour', done: true, tags: [], amt: {} } ],
+  stores: [ { id: 's_Bereti', name: 'Stop&Shop' } ],
+  _id: '53a4bc0d5b48dc8e1f690dc8' }
+      ✓ GETs succeeds api/lists/Jutebi when passed token
+{ message: 'that is not one of your lists',
+  lists: [ { lid: 'Jutebi', shops: 'groceries' } ] }
+      ✓ GETs fails when api/lists/Jutebidog is not in user.lists w/token
+{}
+      ✓ GETs fails with 500 when api/lists/Jutebi i has a bad token
+      ✓ DELs users/:name from users->success=1
+      ✓ GETs {} if users/:tim7 doesnt exist
+      ✓ GETs all users and counts em
+{ message: ' available' }
+      ✓ GETs isUser/:tim7 is available
+[ { name: 'tim7',
+    email: 'tim@sitebuilt.net',
+    lists: [],
+    role: 'user',
+    timestamp: 1404331486688,
+    apikey: 'Qemavohegoburuxosuqujoga',
+    id: 5,
+    _id: '53b465de2f45a3087abf66fd' } ]
+      ✓ POSTs a new /user/:tim7 -> full array of objects
+      ✓ GETs all users expecting the count to go up
+      ✓ GETs a users/:tim7
+{ id: 4,
+  name: 'tim2',
+  email: 'mckt_jp@yahoo.com',
+  defaultList: 0,
+  lists: [],
+  role: 'user',
+  timestamp: 1399208688,
+  apikiey: 'Sobeqosevewacokejufozeki',
+  _id: '53a4bc0d5b48dc8e1f690dc7' }
+      ✓ GETs a users/id/:id
+{ message: ' already registered' }
+      ✓ GETs username is already registered for isUser/:tim7
+11000
+      ✓ rejects POST of duplicate user/:tim7 ->11000
+{ lid: 'Jutebi', shops: 'groceries' }
+      ✓ PUTs an existing :list on /users/:name/:listId->list
+      ✓ rejects a PUT of new :list on /users->list already included
+      ✓ reject a PUT of :list for user -> null list with that id
+    lists
+      ✓ POSTs (creates) a new list
+      ✓ DELs a list by :lid
+      ✓ PUTs updates /list timestamp
+    authentication
+{ token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoidGltIn0.LmoK1Nr8uA4hrGr25L2AlKXs6U832Z_lE6JGznHJfFs' }
+      ✓ POSTs /authenticates w apikey and returns token
+{ message: 'Authentication Error' }
+      ✓ POSTs fails with error for fake user with wrong apikey
+{ message: 'conflict' }
+      ✓ gets a [conflict] to existing user and email
+{ message: 'match' }
+      ✓ gets a [match] to existing user and email
+{ message: 'available', userRec: 'created', email: 'sent' }
+      ✓ gets available -> posts/creates user expected to return user rec for [timz]
+1
+      ✓ DELs users/:name from users->success=1
+
+
+  30 passing (172ms)
 
 ===ToDo===
 authentication
