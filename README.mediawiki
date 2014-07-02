@@ -7,7 +7,7 @@ Currently hosted at parleyvale.com
 test using mocha installed globally 
 
 ===using superagent and mocha for testing===
-
+<pre>
 
   basic database tests
     ✓ if there are no lists for user it should be undefined
@@ -100,7 +100,7 @@ test using mocha installed globally
 
 
   30 passing (172ms)
-
+</pre>
 ===ToDo===
 authentication
 :[http://blog.auth0.com/2014/01/07/angularjs-authentication-with-cookies-vs-token/ angularjs-authentication-with-cookies-vs-token]
