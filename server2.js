@@ -89,7 +89,7 @@ findByToken = function(token, fn) {
             var name = user.name;
             db.collection('users', function(err, collection) {
                 collection.findOne({name:name},function(err, items) {
-                    console.log(items);
+                    //console.log(items);
                     if (items.name === name) {
                         return fn(null, items);
                     } 
@@ -104,10 +104,10 @@ findByToken = function(token, fn) {
 }
 
 findByApiKey = function(apikey, fn) {
-  console.log(apikey)
+  //console.log(apikey)
   db.collection('users', function(err, collection) {
     collection.findOne({apikey:apikey},function(err, items) {
-      console.log(items);
+      //console.log(items);
       if (items==null){
         return fn(null, null); 
       } else if (items.apikey === apikey) {
@@ -303,7 +303,7 @@ app.get('/api/', function(req, res) {
 app.post('/api/authenticate', 
   passport.authenticate('localapikey', {session: false, failureRedirect: '/api/unauthorized'}),
   function(req, res) {
-    console.log(req.body)
+    //console.log(req.body)
     console.log('just sent body in /api/authenticate')
     var payload = {name: req.user.name};
     var token = jwt.encode(payload, secret);
@@ -316,7 +316,7 @@ app.post('/api/authenticate',
 app.get('/api/account', 
   passport.authenticate('bearer', { session: false }), 
   function(req, res){ 
-    console.log('in api/account 1') 
+    console.log('in api/account ') 
     console.log(req.body)
     res.jsonp(req.user)
 });
@@ -561,18 +561,24 @@ app.delete('/api/lists/:lid', function(req,res){
     });
   });      
 })
-app.put('/api/lists/:lid', function(req,res){
-  console.log('in update list/:lid');
-  console.log(req.params);
-  var body=req.body;
-  var lid = req.params.lid;
-  db.collection('lists', function(err, collection) {
-    collection.update({lid:lid},{$set:body},function(err, items) {
-      console.log(items);
-      res.jsonp(items);
-    });
-  });
-})
+app.put('/api/lists/:lid',
+    passport.authenticate('bearer', { session: false }), 
+    function(req, res){ 
+        console.log('XXXXX in update list/:lid');
+        var body=req.body;
+        var lid = req.params.lid;
+        if (isRightList(req.user.lists, lid)) { 
+            db.collection('lists', function(err, collection) {
+                collection.update({lid:lid},{$set:body},function(err, items) {
+                    console.log(items);
+                    res.jsonp(items);
+                });
+            });
+        } else {
+            res.jsonp({message: 'that is not one of your lists', lists: req.user.lists})
+        }
+    }
+)
 
 app.listen(3000);
 console.log('listening on port 3000');
