@@ -244,7 +244,7 @@ describe('superagent:', function(){
     })
     it('PUTs updates /list timestamp', function(done){
       superagent.put(httpLoc+'lists/'+listId)
-        .set('Authorization', 'Bearer yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoidGltIn0.LmoK1Nr8uA4hrGr25L2AlKXs6U832Z_lE6JGznHJfFs')        
+        .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoidGltIn0.LmoK1Nr8uA4hrGr25L2AlKXs6U832Z_lE6JGznHJfFs')        
         .send({timestamp:Date.now()})
         .end(function(e, res){
           //console.log(res.body)
