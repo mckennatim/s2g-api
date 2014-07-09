@@ -25,16 +25,15 @@ describe('superagent:', function(){
       })    
   })
   describe('users', function(){
-    it('POSTs succeeds for fake user for correct apikey',function(done){
+    it('POSTs fails for tim2 with tim apikey',function(done){
       agent
-        .post('http://localhost:3000/api/authenticate')
+        .post('http://localhost:3000/api/authenticate/tim2')
         .send({apikey:apikey})
         .end(function(e,res){
           console.log(res.body
             )
-          expect(res.body.token.length).to.be.above(30)
-          expect(res.body.token).to.be.a('string');
-          expect(1).to.eql(1);
+          expect(res.body.token).to.be(undefined);
+          expect(res.body.message).to.be('apikey does not match user');
           done();
         })
     })
@@ -263,7 +262,7 @@ describe('superagent:', function(){
     //before(loginUser(agent));    
     it('POSTs /authenticates w apikey and returns token',function(done){
       agent
-        .post('http://localhost:3000/api/authenticate')
+        .post('http://localhost:3000/api/authenticate/tim')
         .send({apikey:apikey})
         .end(function(e,res){
           console.log(res.body )
@@ -274,7 +273,7 @@ describe('superagent:', function(){
 
     it('POSTs fails with error for fake user with wrong apikey',function(done){
       agent
-        .post('http://localhost:3000/api/authenticate')
+        .post('http://localhost:3000/api/authenticate/tim')
         .send({apikey:'123457'})
         .end(function(e,res){
           console.log(res.body);

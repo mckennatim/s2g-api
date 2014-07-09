@@ -80,7 +80,7 @@ exports.inidata={'lists':{name:'lists', items:[
     }], role:'admin', timestamp:1399208688, apikey:'Natacitipavuwunexelisaci'},
   {id:2, name: 'tim7', email: 'mckenna.tim7@gmail.com', defaultList: 0, lists:[], role:'user', timestamp:1399208688, apikey:'Qemavohegoburuxosuqujoga' },
   {id:3, name: 'peri', email: 'perimckenna@gmail.com', defaultList: 0, lists:[], role:'user', timestamp:1399208688, apikey: 'Piyopagibatinohovixekadi'},
-  {id:4, name: 'tim2', email: 'mckt_jp@yahoo.com', defaultList: 0, lists:[], role:'user', timestamp:1399208688, apikiey: 'Sobeqosevewacokejufozeki'}
+  {id:4, name: 'tim2', email: 'mckt_jp@yahoo.com', defaultList: 0, lists:[], role:'user', timestamp:1399208688, apikey: 'Sobeqosevewacokejufozeki'}
   ]}
 }
 
