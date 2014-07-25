@@ -76,6 +76,16 @@ describe('superagent:', function(){
           expect(res.status).to.be(500);
           done()
         })
+    })
+    it ('GETs tim user record when token is good', function(done){
+       agent
+        .get(httpLoc+'users/tim')
+        .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoidGltIn0.LmoK1Nr8uA4hrGr25L2AlKXs6U832Z_lE6JGznHJfFs')        
+        .end(function(e,res){
+          console.log(res.body)
+          expect(res.body.name).to.be('tim');
+          done()
+        })       
     })  
     it('DELs users/:name from users->success=1', function(done){
       superagent.del(httpLoc+'users/'+name)
@@ -119,7 +129,7 @@ describe('superagent:', function(){
     })
     it('POSTs a new /user/:tim7 -> full array of objects ', function(done){
       superagent.post(httpLoc+'users')
-        .send({name:name, email:"tim@sitebuilt.net", lists:[],role:'user', timestamp:1399208688, apikey:'Qemavohegoburuxosuqujoga' })
+        .send({name:name, email:"tim@sitebuilt.net", defaultList: 0, lists:[],role:'user', timestamp:1399208688, apikey:'Qemavohegoburuxosuqujoga' })
         .end(function(e,res){
           console.log(res.body)
           expect(e).to.eql(null)
@@ -271,13 +281,13 @@ describe('superagent:', function(){
         })
     })
 
-    it('POSTs fails with error for fake user with wrong apikey',function(done){
+    it('POSTs fails with 401 for tim with wrong apikey',function(done){
       agent
         .post('http://localhost:3000/api/authenticate/tim')
         .send({apikey:'123457'})
         .end(function(e,res){
-          console.log(res.body);
-          expect(res.body.message).to.be('Authentication Error');
+          console.log(res.status);
+          expect(res.status).to.be(401);
           done();
         })
     })

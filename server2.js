@@ -286,7 +286,7 @@ app.all('*', function(req,res,next){
     res.header("Access-Control-Allow-Origin", htt);
     res.header("Access-Control-Allow-Credentials", true);
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE, OPTIONS');
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-xsrf-token");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-xsrf-token, Authorization");
     next();
 });
 
@@ -529,9 +529,9 @@ app.get('/api/lists/:lid',
         passport.authenticate('bearer', { session: false }), 
         function(req, res){ 
                 console.log('in getList by lid');
-                //console.log(req.params);
-                //console.log(req.user);
                 var lid = req.params.lid;
+                console.log(lid);              
+                console.log(req.user);                
                 if (isRightList(req.user.lists, lid)) {
                         db.collection('lists', function(err, collection) {
                                 collection.findOne({lid:lid}, function(err, items) {
