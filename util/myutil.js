@@ -60,17 +60,18 @@ exports.populateDB = function(db, huh) {
     });
 };
 exports.inidata={'lists':{name:'lists', items:[
-  {lid:'Jutebi', shops:'groceries', timestamp:1395763172175, list:[
+  {lid:'Jutebi', shops:'groceries', timestamp:1395763172175, items:[
       {product:'banana', done:false, tags:[], amt:{}},
       {product:'coffee', done:false, tags:[], amt:{}},
       {product:'apples', done:true, tags:['produce'], amt:{qty:3, unit:'3lb bag'}},
       {product:'milk', done:false, tags:['orgainic', 'dairy'], amt:{qty:1,unit:'1/2 gal'}},
       {product:'butter', done:false, tags:[], amt:{}},
       {product:'teff flour', done:true, tags:[], amt:{}}], 
-        stores:[{id:'s_Bereti', name: 'Stop&Shop'}]},
-  {lid:'Guvupa', shops:'groceries', timestamp:1395763172175},
-  {lid:'Kidoju', shops:'hardware', timestamp:1395763172175},
-  {lid:'Woduvu', shops:'drugs', timestamp:1395763172175},
+        stores:[{id:'s_Bereti', name: 'Stop&Shop'}],
+        users:['tim']},
+  {lid:'Guvupa', shops:'groceries', timestamp:1395763172175, items:[], users:[]},
+  {lid:'Kidoju', shops:'hardware', timestamp:1395763172175, items:[], users:[]},
+  {lid:'Woduvu', shops:'drugs', timestamp:1395763172175, items:[], users:[]}
   ]},
  'users':{name:'users',items:[
   {id:1, name: 'tim', email: 'mckenna.tim@gmail.com', defaultList: 0, 

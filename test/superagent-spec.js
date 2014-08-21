@@ -191,38 +191,38 @@ describe('superagent:', function(){
         })    
     })
 
-    it('PUTs an existing :list on /users/:name/:listId->list', function(done){
-      superagent.put(httpLoc+'users/'+name+'/'+listId)
-        .send()
-        .end(function(e, res){
-          console.log(res.body)
-          expect(e).to.eql(null)
-          expect(typeof res.body).to.eql('object')
-          expect(res.body.lid).to.eql(listId) 
-          expect(res.body.shops).to.be(listShops)       
-          done()
-        })
-    })
-    it('rejects a PUT of new :list on /users->list already included', function(done){
-      superagent.put(httpLoc+'users/'+name+'/'+listId)
-        .send()
-        .end(function(e, res){
-          //console.log(res.body)
-          expect(e).to.eql(null)
-          expect(res.body).to.be('list already included')       
-          done()
-        })
-    })    
-    it('reject a PUT of :list for user -> null list with that id', function(done){
-      superagent.put(httpLoc+'users/'+name+'/'+otherListId)
-        .send()
-        .end(function(e, res){
-          //console.log(res.body)
-          expect(e).to.eql(null)
-          expect(res.body).to.be('null list with that lid')       
-          done()
-        })
-    })         
+    // it('PUTs an existing :list on /users/:name/:listId->list', function(done){
+    //   superagent.put(httpLoc+'users/'+name+'/'+listId)
+    //     .send()
+    //     .end(function(e, res){
+    //       console.log(res.body)
+    //       expect(e).to.eql(null)
+    //       expect(typeof res.body).to.eql('object')
+    //       expect(res.body.lid).to.eql(listId) 
+    //       expect(res.body.shops).to.be(listShops)       
+    //       done()
+    //     })
+    // })
+    // it('rejects a PUT of new :list on /users->list already included', function(done){
+    //   superagent.put(httpLoc+'users/'+name+'/'+listId)
+    //     .send()
+    //     .end(function(e, res){
+    //       //console.log(res.body)
+    //       expect(e).to.eql(null)
+    //       expect(res.body).to.be('list already included')       
+    //       done()
+    //     })
+    // })    
+    // it('reject a PUT of :list for user -> null list with that id', function(done){
+    //   superagent.put(httpLoc+'users/'+name+'/'+otherListId)
+    //     .send()
+    //     .end(function(e, res){
+    //       //console.log(res.body)
+    //       expect(e).to.eql(null)
+    //       expect(res.body).to.be('null list with that lid')       
+    //       done()
+    //     })
+    // })         
   })
 
 /*----------------------------------------------------------------------------------*/
@@ -232,20 +232,22 @@ describe('superagent:', function(){
 
     it('POSTs (creates) a new list',function(done){
       superagent.post(httpLoc+'lists/'+shops)
+        .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoidGltIn0.LmoK1Nr8uA4hrGr25L2AlKXs6U832Z_lE6JGznHJfFs') 
         .send()
         .end(function(e,res){
-          //console.log(res.body)
-          newListId = res.body[0].lid
-          //console.log(lid)
-          expect(res.body[0].shops).to.eql(shops)
+          console.log(res.body)
+          newListId=res.body.lid
+          expect(res.body.shops).to.eql(shops)
           done()
         })
     })
 
     it('DELs a list by :lid', function(done){
+      console.log(newListId)
       superagent.del(httpLoc+'lists/'+newListId)
+        .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoidGltIn0.LmoK1Nr8uA4hrGr25L2AlKXs6U832Z_lE6JGznHJfFs')       
         .end(function(e, res){
-          //console.log(res.body)
+          console.log(res.body)
           expect(e).to.eql(null)
           expect(res.body).to.eql(1)
           done()
@@ -262,6 +264,43 @@ describe('superagent:', function(){
           done()
         })
     })
+    it('PUTs updates /user/tim lists, removing testShop2', function(done){
+      superagent.put(httpLoc+'users/tim')
+        .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoidGltIn0.LmoK1Nr8uA4hrGr25L2AlKXs6U832Z_lE6JGznHJfFs')        
+        .send({$pull: {lists: {shops: 'testShop2'}}})
+        .end(function(e, res){
+          //console.log(res.body)
+          expect(e).to.eql(null)
+          expect(res.body).to.eql(1)
+          done()
+        })
+    })
+    it('GETs a list that is not there', function(done){
+      superagent.get(httpLoc+'lists/'+newListId)
+        .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoidGltIn0.LmoK1Nr8uA4hrGr25L2AlKXs6U832Z_lE6JGznHJfFs')        
+        .end(function(e, res){
+          console.log(res.body)
+          done()
+        })
+    })
+    it('PUTS api/user/Jutebi listinfo in user/tim7 and user in lists', function(done){
+      superagent.put(httpLoc+'user/Jutebi/')
+        .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoidGltNyJ9.puFMhr9kjiRfyRzlYDLdD7rOveQO5KgR6TkDqLmMYk0')
+        .end(function(e,res){
+          console.log(res.body)
+          expect(res.body).to.eql('groceries')
+          done();
+        })
+    })
+    it('fails to PUT api/user/JutebZ listinfo in user/tim7 and user in lists', function(done){
+      superagent.put(httpLoc+'user/JutebZ/')
+        .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoidGltNyJ9.puFMhr9kjiRfyRzlYDLdD7rOveQO5KgR6TkDqLmMYk0')
+        .end(function(e,res){
+          console.log(res.body)
+          expect(res.body.message).to.eql('that list doesnt exist')
+          done();
+        })
+    })    
   })
 /*----------------------------------------------------------------------------------*/
   describe('authentication', function(){

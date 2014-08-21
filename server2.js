@@ -471,53 +471,53 @@ app.get('/api/emailKey/:name', function(req, res) {
         });
     });
 });
-app.put('/api/users/:name/:lid', function(req, res){
-    console.log('in addList2user');
-    var name =req.params.name; 
-    var lid =req.params.lid;
-    var shopName;
-    //var ObjectId = require('mongoose').Types.ObjectId;
-    db.collection('lists', function(err, collection) {
-        collection.findOne({lid:lid}, function(err, alist) {
-            if(err){
-                res.jsonp(err);
-            }else if (alist==null){
-                res.jsonp("null list with that lid");
-            } else {
-                shopName=alist.shops
-                db.collection('users', function(err, collection) {
-                    collection.find({name:name},{lists:{$elemMatch:{lid:lid}}}).toArray(function(err,userLid){
-                        //console.log(userLid[0].lists==undefined)
-                        console.log(userLid)
-                        if(userLid.length==0){
-                            res.jsonp('user doesnt exist');
-                        } else if (err){
-                            ret.jsonp(err)
-                        }else if(userLid[0].lists!=undefined){
-                            console.log('!undefined-list already included');
-                            res.jsonp('list already included');
-                        }else{
-                            collection.find({name:name},{lists:{$elemMatch:{shops:shopName}}}).toArray(function(err,userName){
-                                console.log(userName);
-                                if(userName[0].lists!=undefined){
-                                    console.log('!undefined-name taken, choose another');
-                                    res.jsonp('name taken, choose another');
-                                }else{
-                                    var ulist = {lid:alist.lid, shops:alist.shops}
-                                    collection.update({name:name},{$push:{lists:ulist}}, {upsert:false}, function(err, saved) {
-                                        if(err){res.jsonp(err)}else{
-                                            console.log('adding this list')
-                                            res.jsonp(ulist)};
-                                    });
-                                }
-                            });
-                        }                                      
-                    });
-                });       
-            }
-        });
-    });
-});//PUT=Update
+// app.put('/api/users/:name/:lid', function(req, res){
+//     console.log('in addList2user');
+//     var name =req.params.name; 
+//     var lid =req.params.lid;
+//     var shopName;
+//     //var ObjectId = require('mongoose').Types.ObjectId;
+//     db.collection('lists', function(err, collection) {
+//         collection.findOne({lid:lid}, function(err, alist) {
+//             if(err){
+//                 res.jsonp(err);
+//             }else if (alist==null){
+//                 res.jsonp("null list with that lid");
+//             } else {
+//                 shopName=alist.shops
+//                 db.collection('users', function(err, collection) {
+//                     collection.find({name:name},{lists:{$elemMatch:{lid:lid}}}).toArray(function(err,userLid){
+//                         //console.log(userLid[0].lists==undefined)
+//                         console.log(userLid)
+//                         if(userLid.length==0){
+//                             res.jsonp('user doesnt exist');
+//                         } else if (err){
+//                             ret.jsonp(err)
+//                         }else if(userLid[0].lists!=undefined){
+//                             console.log('!undefined-list already included');
+//                             res.jsonp('list already included');
+//                         }else{
+//                             collection.find({name:name},{lists:{$elemMatch:{shops:shopName}}}).toArray(function(err,userName){
+//                                 console.log(userName);
+//                                 if(userName[0].lists!=undefined){
+//                                     console.log('!undefined-name taken, choose another');
+//                                     res.jsonp('name taken, choose another');
+//                                 }else{
+//                                     var ulist = {lid:alist.lid, shops:alist.shops}
+//                                     collection.update({name:name},{$push:{lists:ulist}}, {upsert:false}, function(err, saved) {
+//                                         if(err){res.jsonp(err)}else{
+//                                             console.log('adding this list')
+//                                             res.jsonp(ulist)};
+//                                     });
+//                                 }
+//                             });
+//                         }                                      
+//                     });
+//                 });       
+//             }
+//         });
+//     });
+// });//PUT=Update
 /*--------------------------------LIST routes----------------------------------------*/
 
 app.get('/api/lists', function(req, res) {
@@ -535,7 +535,11 @@ app.get('/api/lists/:lid',
                 if (isRightList(req.user.lists, lid)) {
                         db.collection('lists', function(err, collection) {
                                 collection.findOne({lid:lid}, function(err, items) {
-                                        if(err){res.jsonp(err)}else{res.jsonp(items)};
+                                        if(err){res.jsonp(err)}else{
+                                            console.log('this got found')
+                                            console.log(items.shops)
+                                            res.jsonp(items)
+                                        };
                                 })
                         })      
                 } else {
@@ -544,27 +548,68 @@ app.get('/api/lists/:lid',
         }
 )
 
-app.post('/api/lists/:shops', function(req,res){
-    console.log('in createList w shops');
-    console.log(req.params.shops);
-    var shops = req.params.shops;
-    var body= {lid: myut.createRandomWord(6), shops:shops, timestamp:Date.now()} 
-    console.log(body);
-    db.collection('lists', function(err, collection) {
-            collection.insert(body, function(err, saved) {
-                    if(err){res.jsonp(err)}else{res.jsonp(saved)};
+app.post('/api/lists/:shops',         
+    passport.authenticate('bearer', { session: false }), 
+    function(req, res){ 
+        console.log('in createList w shops');
+        console.log(req.params.shops);
+        var user =req.user
+        var name = user.name;
+        var shops = req.params.shops;
+        var lid = myut.createRandomWord(6)
+        var body= {lid: lid, shops:shops, stores: [], timestamp:Date.now(), items:[], users: [name]} 
+        console.log(body);
+        db.collection('users', function(err, collection) {         
+            collection.find({name:name}, {lists:{$elemMatch:{shops:shops}}}).toArray(function(err,userData){
+                console.log(userData);
+                if(userData[0].lists!=undefined){
+                    console.log('!undefined-name taken, choose another');
+                    res.jsonp('name taken, choose another');
+                }else{
+                    var ulist = {lid:lid, shops:shops}
+                    collection.update({name:name},{$push:{lists:ulist}}, {upsert:false}, function(err, saved) {
+                        if(err){res.jsonp(err)}
+                        else{
+                            console.log('adding this list to users')
+                            db.collection('lists', function(err, collection) {
+                                collection.insert(body, function(err,saved){
+                                    if(err){res.jsonp(err)}
+                                    else{
+                                        console.log('adding this list to lists')
+                                        res.jsonp(ulist);                        
+                                    }
+                                });
+                            });    
+                        };
+                    });
+                }
             });
-    });  
-})
-app.delete('/api/lists/:lid', function(req,res){
-    console.log('in delete list by lid');
-    console.log(req.params);
-    var lid = req.params.lid;
-    db.collection('lists', function(err, collection) {
-        collection.remove({lid:lid}, function(err, saved) {
-            if(err){res.jsonp(err)}else{res.jsonp(saved)};
         });
-    });      
+})
+
+app.delete('/api/lists/:lid',         
+    passport.authenticate('bearer', { session: false }), 
+    function(req, res){ 
+        console.log('in delete list by lid');
+        console.log(req.params);
+        var lid = req.params.lid;
+        var user = req.user;
+        db.collection('lists', function(err, collection) {
+            collection.update({lid:lid},{$pull:{users:user.name}}, {upsert:false}, function(err, saved) {
+                if(err){res.jsonp(err)}else{
+                    collection.remove({users:{$size:0}}, function(err, saved) {
+                        if(err){res.jsonp(err)};
+                    });
+                    db.collection('users', function(err, collection) {
+                        collection.update({name:user.name},{$pull:{lists:{lid:lid}}}, {multi:true}, function(err, saved) {
+                            if(err){res.jsonp(err)}else{
+                                res.jsonp(saved)
+                            }
+                        });                     
+                    });
+                };
+            });
+        });      
 })
 app.put('/api/lists/:lid',
         passport.authenticate('bearer', { session: false }), 
@@ -584,7 +629,54 @@ app.put('/api/lists/:lid',
                 }
         }
 )
-
+app.put('/api/users/:name',
+    passport.authenticate('bearer', { session: false }), 
+    function(req, res){ 
+        console.log('XXXXX in update user/name');
+        var body=req.body;
+        console.log(body)
+        var name = req.params.name;
+        db.collection('users', function(err, collection) {
+            collection.update({name:name},body, {multi:true} ,function(err, items) {
+                console.log(items);
+                res.jsonp(items);
+            });
+        });
+    }
+)
+app.put('/api/user/:lid',
+    passport.authenticate('bearer', { session: false }), 
+    function(req, res){ 
+        var shops, list;
+        console.log('in PUT api/user/lid ');
+        var user = req.user;
+        var lid = req.params.lid;
+        db.collection('lists', function(err, collection) {
+            collection.findOne({lid:lid},function(err,items){
+                if(err){res.jsonp(err)}else{
+                    if(!items){
+                        res.jsonp({message: 'that list doesnt exist'})
+                    }else{
+                        shops=items.shops;
+                        collection.update({lid:lid},{$addToSet:{users:user.name}}, function(err, items) {
+                            if(err){res.jsonp(err)}else{                        
+                                list={lid:lid, shops:shops}
+                                db.collection('users', function(err, collection) {
+                                    collection.update({name:user.name},{$addToSet:{lists:list}}, function(err,items){
+                                        if(err){res.jsonp(err)}else{
+                                            console.log(shops)
+                                            res.jsonp(shops);
+                                        }
+                                    });
+                                });   
+                            }
+                        });                                                             
+                    }
+                }
+            });
+        });
+    }
+)
 app.listen(3000);
 console.log('listening on port 3000');
 
