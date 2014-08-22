@@ -129,7 +129,7 @@ describe('superagent:', function(){
     })
     it('POSTs a new /user/:tim7 -> full array of objects ', function(done){
       superagent.post(httpLoc+'users')
-        .send({name:name, email:"tim@sitebuilt.net", defaultList: 0, lists:[],role:'user', timestamp:1399208688, apikey:'Qemavohegoburuxosuqujoga' })
+        .send({name:name, email:"tim@sitebuilt.net", defaultList: 0, lists:[{"lid": "Kidoju", "shops": "hardware"}],role:'user', timestamp:1399208688, apikey:'Qemavohegoburuxosuqujoga' })
         .end(function(e,res){
           console.log(res.body)
           expect(e).to.eql(null)

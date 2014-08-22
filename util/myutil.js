@@ -70,7 +70,8 @@ exports.inidata={'lists':{name:'lists', items:[
         stores:[{id:'s_Bereti', name: 'Stop&Shop'}],
         users:['tim']},
   {lid:'Guvupa', shops:'groceries', timestamp:1395763172175, items:[], users:[]},
-  {lid:'Kidoju', shops:'hardware', timestamp:1395763172175, items:[], users:[]},
+  {lid:'Kidoju', shops:'hardware', timestamp:1395763172175, 
+    items:[{product:'duck tape', done:false, tags:[], amt:{}}], users:['tim7']},
   {lid:'Woduvu', shops:'drugs', timestamp:1395763172175, items:[], users:[]}
   ]},
  'users':{name:'users',items:[
@@ -79,7 +80,11 @@ exports.inidata={'lists':{name:'lists', items:[
         "lid" : "Jutebi",
         "shops" : "groceries"
     }], role:'admin', timestamp:1399208688, apikey:'Natacitipavuwunexelisaci'},
-  {id:2, name: 'tim7', email: 'mckenna.tim7@gmail.com', defaultList: 0, lists:[], role:'user', timestamp:1399208688, apikey:'Qemavohegoburuxosuqujoga' },
+  {id:2, name: 'tim7', email: 'mckenna.tim7@gmail.com', defaultList: 0, 
+    lists:[{
+      "lid": "Kidoju",
+      "shops": "hardware"
+    }], role:'user', timestamp:1399208688, apikey:'Qemavohegoburuxosuqujoga' },
   {id:3, name: 'peri', email: 'perimckenna@gmail.com', defaultList: 0, lists:[], role:'user', timestamp:1399208688, apikey: 'Piyopagibatinohovixekadi'},
   {id:4, name: 'tim2', email: 'mckt_jp@yahoo.com', defaultList: 0, lists:[], role:'user', timestamp:1399208688, apikey: 'Sobeqosevewacokejufozeki'}
   ]}

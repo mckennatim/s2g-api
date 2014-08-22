@@ -662,10 +662,10 @@ app.put('/api/user/:lid',
                             if(err){res.jsonp(err)}else{                        
                                 list={lid:lid, shops:shops}
                                 db.collection('users', function(err, collection) {
-                                    collection.update({name:user.name},{$addToSet:{lists:list}}, function(err,items){
+                                    collection.update({name:user.name},{$push:{lists:list}}, function(err,items){
                                         if(err){res.jsonp(err)}else{
-                                            console.log(shops)
-                                            res.jsonp(shops);
+                                            console.log(list)
+                                            res.jsonp(list.shops);
                                         }
                                     });
                                 });   
