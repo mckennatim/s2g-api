@@ -249,7 +249,7 @@ describe('superagent:', function(){
         .end(function(e, res){
           console.log(res.body)
           expect(e).to.eql(null)
-          expect(res.body).to.eql(1)
+          expect(res.body.name).to.eql('tim')
           done()
         })      
     })

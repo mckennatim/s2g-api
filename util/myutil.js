@@ -60,31 +60,241 @@ exports.populateDB = function(db, huh) {
     });
 };
 exports.inidata={'lists':{name:'lists', items:[
-  {lid:'Jutebi', shops:'groceries', timestamp:1395763172175, items:[
-      {product:'banana', done:false, tags:[], amt:{}},
-      {product:'coffee', done:false, tags:[], amt:{}},
-      {product:'apples', done:true, tags:['produce'], amt:{qty:3, unit:'3lb bag'}},
-      {product:'milk', done:false, tags:['orgainic', 'dairy'], amt:{qty:1,unit:'1/2 gal'}},
-      {product:'butter', done:false, tags:[], amt:{}},
-      {product:'teff flour', done:true, tags:[], amt:{}}], 
-        stores:[{id:'s_Bereti', name: 'Stop&Shop'}],
-        users:['tim']},
+ {
+    "lid": "Jutebi",
+    "shops": "groceries",
+    "timestamp": 1410019842776,
+    "items": [
+      {
+        "product": "butter",
+        "done": false,
+        "tags": [],
+        "amt": {
+          "qty": ""
+        },
+        "loc": "dairy"
+      },
+      {
+        "product": "coffee",
+        "done": false,
+        "tags": [],
+        "amt": {
+          "qty": ""
+        },
+        "loc": "coffee/tea"
+      },
+      {
+        "product": "milk",
+        "done": false,
+        "tags": [
+          "orgainic",
+          "dairy"
+        ],
+        "amt": {
+          "qty": "2",
+          "unit": "1/2 gal"
+        },
+        "loc": "dairy"
+      },
+      {
+        "product": "frog legs",
+        "done": false,
+        "amt": {
+          "qty": "3"
+        },
+        "loc": "meats"
+      },
+      {
+        "product": "apples",
+        "done": false,
+        "tags": [
+          "produce"
+        ],
+        "amt": {
+          "qty": "2",
+          "unit": "3lb bag"
+        },
+        "loc": "produce"
+      },
+      {
+        "product": "seltzer",
+        "done": true,
+        "amt": {
+          "qty": "4"
+        },
+        "loc": "snacks"
+      },
+      {
+        "product": "banana",
+        "done": true,
+        "tags": [],
+        "amt": {
+          "qty": ""
+        },
+        "loc": "produce"
+      },
+      {
+        "product": "cat food",
+        "done": true,
+        "amt": {
+          "qty": ""
+        },
+        "loc": "pet"
+      },
+      {
+        "product": "teff flour",
+        "done": true,
+        "tags": [],
+        "amt": {},
+        "loc": "baking"
+      }
+    ],
+    "stores": [
+      {
+        "id": "s_Bereti",
+        "name": "Stop&Shop",        
+      },
+      {
+        "id": "s_Bereto",
+        "name": "WholeFoods"        
+      }
+    ],
+    "users": [
+      "tim",
+      "tim7"
+    ]
+  },
   {lid:'Guvupa', shops:'groceries', timestamp:1395763172175, items:[], users:[]},
-  {lid:'Kidoju', shops:'hardware', timestamp:1395763172175, 
-    items:[{product:'duck tape', done:false, tags:[], amt:{}}], users:['tim7']},
-  {lid:'Woduvu', shops:'drugs', timestamp:1395763172175, items:[], users:[]}
+  {
+    "lid": "Kidoju",
+    "shops": "hardware",
+    "timestamp": 1409966611033,
+    "items": [
+      {
+        "product": "12-2",
+        "done": false
+      },
+      {
+        "product": "pipe hangers",
+        "done": true,
+        "amt": {
+          "qty": ""
+        }
+      },
+      {
+        "product": "fuzz balls",
+        "done": true,
+        "tags": [],
+        "amt": {}
+      }
+    ],
+    "users": [
+      "tim"
+    ],
+    "stores": [
+      {
+        "id": "s_Cereti",
+        "name": "HomeDepot"      
+      },
+      {
+        "id": "s_Cereto",
+        "name": "Ace"        
+      }
+    ],    
+  },
+  {
+    "lid": "Woduvu",
+    "shops": "drugs",
+    "timestamp": 1395763172175,
+    "items": [
+      {
+        "product": "dental floss",
+        "done": true,
+        "amt": {
+          "qty": ""
+        }
+      },
+      {
+        "product": "hydrogen peroxide",
+        "done": true,
+        "tags": [],
+        "amt": {}
+      }        
+    ],
+    "users": [
+        "tim7"
+    ],
+       "stores": [
+      {
+        "id": "s_Bereti",
+        "name": "Stop&Shop",        
+      },
+      {
+        "id": "s_Beretc",
+        "name": "CVS"        
+      }
+    ],
+  },
+  {
+    "lid": "Tamaki",
+    "shops": "down center",
+    "timestamp": 1410011606582,
+    "items": [
+      {
+        "product": "coffee",
+        "done": false
+      }
+    ],
+    "users": [
+      "tim"
+    ]
+  }
   ]},
  'users':{name:'users',items:[
-  {id:1, name: 'tim', email: 'mckenna.tim@gmail.com', defaultList: 0, 
-    lists:[{
-        "lid" : "Jutebi",
-        "shops" : "groceries"
-    }], role:'admin', timestamp:1399208688, apikey:'Natacitipavuwunexelisaci'},
-  {id:2, name: 'tim7', email: 'mckenna.tim7@gmail.com', defaultList: 0, 
-    lists:[{
-      "lid": "Kidoju",
-      "shops": "hardware"
-    }], role:'user', timestamp:1399208688, apikey:'Qemavohegoburuxosuqujoga' },
+  {
+    "_id": "5409c803d7a626d671297331",
+    "apikey": "Natacitipavuwunexelisaci",
+    "defaultLid": "Kidoju",
+    "email": "mckenna.tim@gmail.com",
+    "id": 1,
+    "lists": [
+      {
+        "lid": "Tamaki",
+        "shops": "down center"
+      },
+      {
+        "lid": "Jutebi",
+        "shops": "groceries"
+      },
+      {
+        "lid": "Kidoju",
+        "shops": "hardware"
+      }
+    ],
+    "name": "tim",
+    "role": "admin",
+    "timestamp": 1409936908725
+  },
+  {
+    "_id": "5409ee0cc4cd771572c29335",
+    "apikey": "Qemavohegoburuxosuqujoga",
+    "defaultLid": "Jutebi",
+    "email": "tim@sitebuilt.net",
+    "id": 5,
+    "lists": [
+      {
+        "lid": "Jutebi",
+        "shops": "groceries"
+      },
+      {
+        "lid": "Woduvu",
+        "shops": "drugs"
+      }
+    ],
+    "name": "tim7",
+    "role": "user",
+    "timestamp": 1410027284251
+  },
   {id:3, name: 'peri', email: 'perimckenna@gmail.com', defaultList: 0, lists:[], role:'user', timestamp:1399208688, apikey: 'Piyopagibatinohovixekadi'},
   {id:4, name: 'tim2', email: 'mckt_jp@yahoo.com', defaultList: 0, lists:[], role:'user', timestamp:1399208688, apikey: 'Sobeqosevewacokejufozeki'}
   ]}

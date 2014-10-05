@@ -603,7 +603,12 @@ app.delete('/api/lists/:lid',
                     db.collection('users', function(err, collection) {
                         collection.update({name:user.name},{$pull:{lists:{lid:lid}}}, {multi:true}, function(err, saved) {
                             if(err){res.jsonp(err)}else{
-                                res.jsonp(saved)
+                            	collection.findOne({name:user.name},function(err, items) {
+                            		if(err){res.jsonp(err)}else{
+                            			console.log(items)
+	                                	res.jsonp(items);
+	                               }
+                               });
                             }
                         });                     
                     });
@@ -665,7 +670,7 @@ app.put('/api/user/:lid',
                                     collection.update({name:user.name},{$push:{lists:list}}, function(err,items){
                                         if(err){res.jsonp(err)}else{
                                             console.log(list)
-                                            res.jsonp(list.shops);
+                                            res.jsonp(list);
                                         }
                                     });
                                 });   
