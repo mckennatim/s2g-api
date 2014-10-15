@@ -288,7 +288,7 @@ describe('superagent:', function(){
         .set('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoidGltNyJ9.puFMhr9kjiRfyRzlYDLdD7rOveQO5KgR6TkDqLmMYk0')
         .end(function(e,res){
           console.log(res.body)
-          expect(res.body).to.eql('groceries')
+          expect(res.body.shops).to.eql('groceries')
           done();
         })
     })

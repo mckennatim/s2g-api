@@ -531,7 +531,7 @@ app.get('/api/lists/:lid',
                 console.log('in getList by lid');
                 var lid = req.params.lid;
                 console.log(lid);              
-                console.log(req.user);                
+                console.log(req.user);             
                 if (isRightList(req.user.lists, lid)) {
                         db.collection('lists', function(err, collection) {
                                 collection.findOne({lid:lid}, function(err, items) {
@@ -637,12 +637,13 @@ app.put('/api/lists/:lid',
 app.put('/api/users/:name',
     passport.authenticate('bearer', { session: false }), 
     function(req, res){ 
-        console.log('XXXXX in update user/name');
+        console.log('XXXXX in update users/name');
         var body=req.body;
+        delete body._id;
         console.log(body)
         var name = req.params.name;
         db.collection('users', function(err, collection) {
-            collection.update({name:name},body, {multi:true} ,function(err, items) {
+            collection.update({name:name},body, function(err, items) {
                 console.log(items);
                 res.jsonp(items);
             });
